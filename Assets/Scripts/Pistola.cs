@@ -2,15 +2,18 @@ using UnityEngine;
 
 public class Pistola : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    private Arma pistola = new Arma(25, 1f, 6);
 
-    // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetMouseButtonDown(0))
+        {
+            pistola.Disparar();
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            pistola.Recargar(6);
+        }
     }
 }

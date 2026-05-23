@@ -7,13 +7,14 @@ public class Movimiento : MonoBehaviour
     public float gravedad = -9.81f;
     public float salto = 4f;
 
+
     public Transform checkPiso;
     public float distanciaPiso = 0.4f;
     public LayerMask piso;
 
     bool enPiso;
     Vector3 velocidad;
-    Arma Arma = new Arma(10, 0, 10);
+    Arma Arma = new Arma(25, 1f, 6);
 
     void Update()
     {
@@ -61,7 +62,7 @@ public class Movimiento : MonoBehaviour
 
     void Disparar()
     {
-        if (Arma.Balas <= 0)
+        if (Arma.Cartucho <= 0)
         {
             Arma.Disparar();
             return;
@@ -77,15 +78,15 @@ public class Movimiento : MonoBehaviour
                 Debug.Log("hit");
             }
 
-            else if (Arma.Balas <= 0)
+            else if (Arma.Cartucho <= 0)
             {
-                Debug.Log("Sin balas para disparar");
+                Debug.Log("Sin balas para disparar, recarga el arma!");
             }
         }
     }
 
     void Recargar()
     {
-        Arma.Recargar(10);
+        Arma.Recargar(6);
     }
 }

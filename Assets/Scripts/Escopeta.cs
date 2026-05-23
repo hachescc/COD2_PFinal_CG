@@ -1,19 +1,20 @@
 using UnityEngine;
 
-public class Rifle : MonoBehaviour
+public class Escopeta : MonoBehaviour
 {
-    private Arma rifle = new Arma(25, 0.5f, 10);
+    private Arma escopeta = new Arma(25, 1.5f, 4);
+
 
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            rifle.Disparar();
+            escopeta.Disparar();
         }
 
         if (Input.GetMouseButtonDown(1))
         {
-            rifle.Recargar(10);
+            escopeta.Recargar(4);
         }
     }
 }

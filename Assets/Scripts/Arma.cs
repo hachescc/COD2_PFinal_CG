@@ -4,10 +4,10 @@ using UnityEngine;
 public class Arma
 {
     private int balas;
-    private int cadencia;
+    private float cadencia;
     private int cartucho;
 
-    public Arma(int balas, int cadencia, int cartucho)
+    public Arma(int balas, float cadencia, int cartucho)
     {
         this.balas = balas;
         this.cadencia = cadencia;
@@ -16,7 +16,7 @@ public class Arma
 
 
     public int Balas { get => balas; set => balas = value; }
-    public int Cadencia { get => cadencia; set => cadencia = value; }
+    public float Cadencia { get => cadencia; set => cadencia = value; }
     public int Cartucho { get => cartucho; set => cartucho = value; }
 
 
@@ -41,7 +41,7 @@ public class Arma
             balas -= cantidad - cartucho;
             cartucho += cantidad - cartucho;
             Debug.Log("Recargando... Balas actuales: " + balas);
-            Debug.Log("Balas al máximo: " + balas);
+            Debug.Log("Balas al máximo: " + cartucho);
 
         }
     }
