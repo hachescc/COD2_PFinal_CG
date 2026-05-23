@@ -13,7 +13,7 @@ public class Movimiento : MonoBehaviour
 
     bool enPiso;
     Vector3 velocidad;
-    Pistola Pistola = new Pistola(10);
+    Arma Arma = new Arma(10, 0, 10);
 
     void Update()
     {
@@ -61,13 +61,13 @@ public class Movimiento : MonoBehaviour
 
     void Disparar()
     {
-        if (Pistola.Balas <= 0)
+        if (Arma.Balas <= 0)
         {
-            Pistola.Disparar();
+            Arma.Disparar();
             return;
         }
 
-        Pistola.Disparar();
+        Arma.Disparar();
 
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit))
@@ -77,7 +77,7 @@ public class Movimiento : MonoBehaviour
                 Debug.Log("hit");
             }
 
-            else if (Pistola.Balas <= 0)
+            else if (Arma.Balas <= 0)
             {
                 Debug.Log("Sin balas para disparar");
             }
@@ -86,6 +86,6 @@ public class Movimiento : MonoBehaviour
 
     void Recargar()
     {
-        Pistola.Recargar(10);
+        Arma.Recargar(10);
     }
 }
