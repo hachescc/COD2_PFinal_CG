@@ -12,12 +12,14 @@ public class Arma
         this.balas = balas;
         this.cadencia = cadencia;
         this.cartucho = cartucho;
+
     }
 
 
     public int Balas { get => balas; set => balas = value; }
     public float Cadencia { get => cadencia; set => cadencia = value; }
     public int Cartucho { get => cartucho; set => cartucho = value; }
+
 
 
     public void Disparar()
@@ -43,6 +45,16 @@ public class Arma
             Debug.Log("Recargando... Balas actuales: " + balas);
             Debug.Log("Balas al máximo: " + cartucho);
 
+        }
+
+        else if (balas <= 0)
+        {
+            Debug.Log("No tienes balas para recargar!");
+        }
+
+        else
+        {
+            Debug.Log("El cartucho ya está lleno!");
         }
     }
 }
