@@ -9,8 +9,8 @@ public class RecogibleObjeto : MonoBehaviour
     }
 
     [Header("Configuracion")]
-    public TipoObjeto tipo      = TipoObjeto.Municion;
-    public float      cantidad  = 10f;
+    public TipoObjeto tipo = TipoObjeto.Municion;
+    public float cantidad = 10f;
 
     void OnTriggerEnter(Collider other)
     {
@@ -27,7 +27,16 @@ public class RecogibleObjeto : MonoBehaviour
         }
         else if (tipo == TipoObjeto.Municion)
         {
-            Debug.Log("Jugador recogió " + cantidad + " balas");
+            Movimiento movimiento = other.GetComponent<Movimiento>();
+
+            if (movimiento != null && movimiento.AgregarMunicionAleatoria((int)cantidad, out string tipoArma))
+            {
+                Debug.Log("Jugador recogio " + cantidad + " balas para " + tipoArma);
+            }
+            else
+            {
+                Debug.Log("Jugador recogio municion, pero no tiene armas para guardarla");
+            }
 
             if (GestorAudio.Instance != null)
             {
