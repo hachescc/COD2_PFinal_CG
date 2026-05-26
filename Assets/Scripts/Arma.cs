@@ -13,6 +13,7 @@ public class Arma
         this.balas    = balas;
         this.cadencia = cadencia;
         this.cartucho = cartucho;
+
     }
 
     public int   Balas    { get => balas;    set => balas    = value; }
