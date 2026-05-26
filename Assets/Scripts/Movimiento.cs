@@ -6,10 +6,12 @@ public class Movimiento : MonoBehaviour
     #region movimiento
     [Header("Movimiento")]
     public CharacterController controlador;
-    public float veloMovi = 2f;
-    public float gravedad = -9.81f;
-    public float salto = 4f;
+    public float veloMovi   = 2f;
+    public float veloCorrer = 6f;
+    public float gravedad   = -9.81f;
+    public float salto      = 4f;
     #endregion
+
     #region arma
     [Header("Arma")]
     public GameObject carryPoint;
@@ -20,7 +22,8 @@ public class Movimiento : MonoBehaviour
     public GameObject armaPistolaPrefab;
     public GameObject armaRiflePrefab;
     public GameObject armaEscopetaPrefab;
-    #endregion    
+    #endregion
+
     #region ui
     [Header("UI")]
     public Text textoRecoger;
@@ -30,10 +33,15 @@ public class Movimiento : MonoBehaviour
     public GameObject miraPequena;
     #endregion
 
+    [Header("Combate")]
+    public float danioPistola  = 20f;
+    public float danioRifle    = 35f;
+    public float danioEscopeta = 50f;
+
     public Transform checkPiso;
     public float distanciaPiso = 0.4f;
     public LayerMask piso;
-    bool enPiso;
+    bool    enPiso;
     Vector3 velocidad;
 
     public GameObject inventarioPanelPistola;
@@ -73,8 +81,10 @@ public class Movimiento : MonoBehaviour
         float x = Input.GetAxisRaw("Horizontal");
         float z = Input.GetAxisRaw("Vertical");
 
+        float velActual = Input.GetKey(KeyCode.LeftShift) ? veloCorrer : veloMovi;
+
         Vector3 movimiento = transform.right * x + transform.forward * z;
-        controlador.Move(movimiento * veloMovi * Time.deltaTime);
+        controlador.Move(movimiento * velActual * Time.deltaTime);
 
         if (Input.GetButtonDown("Jump") && enPiso)
         {
@@ -89,21 +99,51 @@ public class Movimiento : MonoBehaviour
             Disparar();
         }
 
-        if (Input.GetButtonDown("Reload"))
+        if (Input.GetKeyDown(KeyCode.R))
         {
             Recargar();
         }
 
         RecogerArma();
+        Aim();
+        SelectArma();
+    }
 
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+    void SelectArma()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1)) SeleccionarArma(typeof(Pistola));
+        if (Input.GetKeyDown(KeyCode.Alpha2)) SeleccionarArma(typeof(Rifle));
+        if (Input.GetKeyDown(KeyCode.Alpha3)) SeleccionarArma(typeof(Escopeta));
+    }
+
+    void Aim()
+    {
+        if (armaActualObjeto == null) return;
+        if (camara == null) return;
+
+        if (Input.GetMouseButton(1))
         {
-            veloMovi *= 2f;
+            Rifle rifle = armaActualObjeto.GetComponent<Rifle>();
+            if (rifle)
+            {
+                if (panelMira    != null) panelMira.SetActive(true);
+                if (miraPequena  != null) miraPequena.SetActive(false);
+                camara.fieldOfView = 30f;
+            }
+            else
+            {
+                camara.fieldOfView = 40f;
+            }
         }
-
-        else if (Input.GetKeyUp(KeyCode.LeftShift))
+        else if (Input.GetMouseButtonUp(1))
         {
-            veloMovi /= 2f;
+            Rifle rifle = armaActualObjeto.GetComponent<Rifle>();
+            if (rifle)
+            {
+                if (panelMira   != null) panelMira.SetActive(false);
+                if (miraPequena != null) miraPequena.SetActive(true);
+            }
+            camara.fieldOfView = 60f;
         }
 
         Aim();
@@ -200,43 +240,64 @@ public class Movimiento : MonoBehaviour
             return;
         }
 
-        Pistola pistola = armaActualObjeto.GetComponent<Pistola>();
-        Rifle rifle = armaActualObjeto.GetComponent<Rifle>();
+        Pistola  pistola  = armaActualObjeto.GetComponent<Pistola>();
+        Rifle    rifle    = armaActualObjeto.GetComponent<Rifle>();
         Escopeta escopeta = armaActualObjeto.GetComponent<Escopeta>();
+
+        float danio = 0f;
 
         if (pistola != null)
         {
             pistola.Disparar();
+            danio = danioPistola;
         }
         else if (rifle != null)
         {
             rifle.Disparar();
+            danio = danioRifle;
         }
         else if (escopeta != null)
         {
             escopeta.Disparar();
+            danio = danioEscopeta;
         }
         else
         {
             return;
         }
 
-        RaycastHit hit;
+        if (GestorAudio.Instance != null)
+        {
+            GestorAudio.Instance.ReproducirEfecto("disparo");
+        }
+
         if (camara == null)
         {
             Debug.Log("No hay camara asignada!");
             return;
         }
 
+        RaycastHit hit;
         if (Physics.Raycast(camara.transform.position, camara.transform.forward, out hit))
         {
+            Debug.Log("Disparo impacto: " + hit.collider.name);
+
             if (hit.collider.CompareTag("Enemigo"))
             {
-                Debug.Log("hit");
+                SaludEnemigo saludEnemigo = hit.collider.GetComponent<SaludEnemigo>();
+                if (saludEnemigo != null)
+                {
+                    saludEnemigo.getDamage(danio);
+                }
 
+                if (GestorAudio.Instance != null)
+                {
+                    GestorAudio.Instance.ReproducirEfecto("impacto");
+                }
             }
         }
     }
+
     void Recargar()
     {
         if (armaActualObjeto == null)
@@ -245,28 +306,15 @@ public class Movimiento : MonoBehaviour
             return;
         }
 
-        Pistola pistola = armaActualObjeto.GetComponent<Pistola>();
-        Rifle rifle = armaActualObjeto.GetComponent<Rifle>();
+        Pistola  pistola  = armaActualObjeto.GetComponent<Pistola>();
+        Rifle    rifle    = armaActualObjeto.GetComponent<Rifle>();
         Escopeta escopeta = armaActualObjeto.GetComponent<Escopeta>();
 
-        if (pistola != null)
-        {
-            pistola.Recargar();
-        }
-        else if (rifle != null)
-        {
-            rifle.Recargar();
-        }
-        else if (escopeta != null)
-        {
-            escopeta.Recargar();
-        }
-
-        else
-        {
-            return;
-        }
+        if (pistola  != null) pistola.Recargar();
+        else if (rifle    != null) rifle.Recargar();
+        else if (escopeta != null) escopeta.Recargar();
     }
+
     void RecogerArma()
     {
         if (Input.GetKeyDown(KeyCode.E) && armaCerca != null)
@@ -289,37 +337,30 @@ public class Movimiento : MonoBehaviour
             PonerArmaEnPunto(armaActualObjeto, carryPoint.transform, true);
 
             Collider[] colliders = armaActualObjeto.GetComponentsInChildren<Collider>();
-            foreach (Collider collider in colliders)
+            foreach (Collider col in colliders)
             {
-                collider.enabled = false;
+                col.enabled = false;
             }
 
-            Rigidbody rigidbody = armaActualObjeto.GetComponent<Rigidbody>();
-            if (rigidbody != null)
-            {
-                rigidbody.isKinematic = true;
-            }
+            Rigidbody rb = armaActualObjeto.GetComponent<Rigidbody>();
+            if (rb != null) rb.isKinematic = true;
 
             if (armaActualObjeto.GetComponent<Pistola>() != null)
             {
-                if (inventarioPanelPistola != null)
-                {
-                    inventarioPanelPistola.SetActive(true);
-                }
+                if (inventarioPanelPistola != null) inventarioPanelPistola.SetActive(true);
             }
             else if (armaActualObjeto.GetComponent<Rifle>() != null)
             {
-                if (inventarioPanelRifle != null)
-                {
-                    inventarioPanelRifle.SetActive(true);
-                }
+                if (inventarioPanelRifle != null) inventarioPanelRifle.SetActive(true);
             }
             else if (armaActualObjeto.GetComponent<Escopeta>() != null)
             {
-                if (inventarioPanelEscopeta != null)
-                {
-                    inventarioPanelEscopeta.SetActive(true);
-                }
+                if (inventarioPanelEscopeta != null) inventarioPanelEscopeta.SetActive(true);
+            }
+
+            if (GestorAudio.Instance != null)
+            {
+                GestorAudio.Instance.ReproducirEfecto("recoger");
             }
 
             MostrarMensajeRecoger(false);
@@ -338,23 +379,16 @@ public class Movimiento : MonoBehaviour
             PonerArmaEnPunto(armaActualObjeto, ThirdCarryPoint.transform, false);
             return true;
         }
-
         return false;
     }
 
     void SeleccionarArma(System.Type tipoArma)
     {
-        if (carryPoint == null)
-        {
-            return;
-        }
+        if (carryPoint == null) return;
 
         GameObject arma = BuscarArma(tipoArma);
 
-        if (arma == null || arma == armaActualObjeto)
-        {
-            return;
-        }
+        if (arma == null || arma == armaActualObjeto) return;
 
         Transform puntoAnterior = arma.transform.parent;
 
@@ -370,44 +404,22 @@ public class Movimiento : MonoBehaviour
     GameObject BuscarArma(System.Type tipoArma)
     {
         GameObject arma = BuscarArmaEnPunto(carryPoint, tipoArma);
-
-        if (arma == null)
-        {
-            arma = BuscarArmaEnPunto(SecondaryCarryPoint, tipoArma);
-        }
-
-        if (arma == null)
-        {
-            arma = BuscarArmaEnPunto(ThirdCarryPoint, tipoArma);
-        }
-
+        if (arma == null) arma = BuscarArmaEnPunto(SecondaryCarryPoint, tipoArma);
+        if (arma == null) arma = BuscarArmaEnPunto(ThirdCarryPoint, tipoArma);
         return arma;
     }
 
     GameObject BuscarArmaEnPunto(GameObject punto, System.Type tipoArma)
     {
-        if (punto == null)
-        {
-            return null;
-        }
-
+        if (punto == null) return null;
         Component arma = punto.GetComponentInChildren(tipoArma, true);
-
-        if (arma != null)
-        {
-            return arma.gameObject;
-        }
-
+        if (arma != null) return arma.gameObject;
         return null;
     }
 
     void PonerArmaEnPunto(GameObject arma, Transform punto, bool equipada)
     {
-        if (arma == null || punto == null)
-        {
-            return;
-        }
-
+        if (arma == null || punto == null) return;
         arma.transform.SetParent(punto);
         arma.transform.localPosition = Vector3.zero;
         arma.transform.localRotation = Quaternion.identity;
@@ -417,17 +429,16 @@ public class Movimiento : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         GameObject arma = ObtenerArma(other.gameObject);
-
         if (arma != null)
         {
             armaCerca = arma;
             MostrarMensajeRecoger(true);
         }
     }
+
     void OnTriggerExit(Collider other)
     {
         GameObject arma = ObtenerArma(other.gameObject);
-
         if (arma != null && arma == armaCerca)
         {
             armaCerca = null;
@@ -437,32 +448,19 @@ public class Movimiento : MonoBehaviour
 
     GameObject ObtenerArma(GameObject objeto)
     {
-        Pistola pistola = objeto.GetComponentInChildren<Pistola>();
-        Rifle rifle = objeto.GetComponentInChildren<Rifle>();
+        Pistola  pistola  = objeto.GetComponentInChildren<Pistola>();
+        Rifle    rifle    = objeto.GetComponentInChildren<Rifle>();
         Escopeta escopeta = objeto.GetComponentInChildren<Escopeta>();
 
-        if (pistola != null)
-        {
-            return pistola.gameObject;
-        }
-        else if (rifle != null)
-        {
-            return rifle.gameObject;
-        }
-        else if (escopeta != null)
-        {
-            return escopeta.gameObject;
-        }
-
+        if (pistola  != null) return pistola.gameObject;
+        if (rifle    != null) return rifle.gameObject;
+        if (escopeta != null) return escopeta.gameObject;
         return null;
     }
+
     void MostrarMensajeRecoger(bool mostrar)
     {
-        if (panelRecoger != null)
-        {
-            panelRecoger.SetActive(mostrar);
-        }
-
+        if (panelRecoger != null) panelRecoger.SetActive(mostrar);
         if (textoRecoger != null)
         {
             textoRecoger.text = "Presiona E para recoger";
