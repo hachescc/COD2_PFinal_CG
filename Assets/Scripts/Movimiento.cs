@@ -6,10 +6,10 @@ public class Movimiento : MonoBehaviour
     #region movimiento
     [Header("Movimiento")]
     public CharacterController controlador;
-    public float veloMovi   = 2f;
+    public float veloMovi = 2f;
     public float veloCorrer = 6f;
-    public float gravedad   = -9.81f;
-    public float salto      = 4f;
+    public float gravedad = -9.81f;
+    public float salto = 4f;
     #endregion
 
     #region arma
@@ -34,14 +34,14 @@ public class Movimiento : MonoBehaviour
     #endregion
 
     [Header("Combate")]
-    public float danioPistola  = 20f;
-    public float danioRifle    = 35f;
+    public float danioPistola = 20f;
+    public float danioRifle = 35f;
     public float danioEscopeta = 50f;
 
     public Transform checkPiso;
     public float distanciaPiso = 0.4f;
     public LayerMask piso;
-    bool    enPiso;
+    bool enPiso;
     Vector3 velocidad;
 
     public GameObject inventarioPanelPistola;
@@ -107,6 +107,26 @@ public class Movimiento : MonoBehaviour
         RecogerArma();
         Aim();
         SelectArma();
+
+        if (armaActualObjeto != null)
+        {
+            Pistola pistola = armaActualObjeto.GetComponent<Pistola>();
+            Rifle rifle = armaActualObjeto.GetComponent<Rifle>();
+            Escopeta escopeta = armaActualObjeto.GetComponent<Escopeta>();
+
+            if (pistola != null)
+            {
+                HUDController.Instance.ActualizarMunicion(pistola.Cartucho, pistola.Balas);
+            }
+            else if (rifle != null)
+            {
+                HUDController.Instance.ActualizarMunicion(rifle.Cartucho, rifle.Balas);
+            }
+            else if (escopeta != null)
+            {
+                HUDController.Instance.ActualizarMunicion(escopeta.Cartucho, escopeta.Balas);
+            }
+        }
     }
 
     void SelectArma()
@@ -126,8 +146,8 @@ public class Movimiento : MonoBehaviour
             Rifle rifle = armaActualObjeto.GetComponent<Rifle>();
             if (rifle)
             {
-                if (panelMira    != null) panelMira.SetActive(true);
-                if (miraPequena  != null) miraPequena.SetActive(false);
+                if (panelMira != null) panelMira.SetActive(true);
+                if (miraPequena != null) miraPequena.SetActive(false);
                 camara.fieldOfView = 30f;
             }
             else
@@ -140,7 +160,7 @@ public class Movimiento : MonoBehaviour
             Rifle rifle = armaActualObjeto.GetComponent<Rifle>();
             if (rifle)
             {
-                if (panelMira   != null) panelMira.SetActive(false);
+                if (panelMira != null) panelMira.SetActive(false);
                 if (miraPequena != null) miraPequena.SetActive(true);
             }
             camara.fieldOfView = 60f;
@@ -155,8 +175,8 @@ public class Movimiento : MonoBehaviour
             return;
         }
 
-        Pistola  pistola  = armaActualObjeto.GetComponent<Pistola>();
-        Rifle    rifle    = armaActualObjeto.GetComponent<Rifle>();
+        Pistola pistola = armaActualObjeto.GetComponent<Pistola>();
+        Rifle rifle = armaActualObjeto.GetComponent<Rifle>();
         Escopeta escopeta = armaActualObjeto.GetComponent<Escopeta>();
 
         float danio = 0f;
@@ -221,13 +241,73 @@ public class Movimiento : MonoBehaviour
             return;
         }
 
-        Pistola  pistola  = armaActualObjeto.GetComponent<Pistola>();
-        Rifle    rifle    = armaActualObjeto.GetComponent<Rifle>();
+        Pistola pistola = armaActualObjeto.GetComponent<Pistola>();
+        Rifle rifle = armaActualObjeto.GetComponent<Rifle>();
         Escopeta escopeta = armaActualObjeto.GetComponent<Escopeta>();
 
-        if (pistola  != null) pistola.Recargar();
-        else if (rifle    != null) rifle.Recargar();
+        if (pistola != null) pistola.Recargar();
+        else if (rifle != null) rifle.Recargar();
         else if (escopeta != null) escopeta.Recargar();
+    }
+
+    public bool AgregarMunicionAleatoria(int cantidad, out string tipoArma)
+    {
+        tipoArma = "";
+
+        GameObject[] armas = new GameObject[3];
+        int totalArmas = 0;
+
+        GameObject pistolaObjeto = BuscarArma(typeof(Pistola));
+        if (pistolaObjeto != null) armas[totalArmas++] = pistolaObjeto;
+
+        GameObject rifleObjeto = BuscarArma(typeof(Rifle));
+        if (rifleObjeto != null) armas[totalArmas++] = rifleObjeto;
+
+        GameObject escopetaObjeto = BuscarArma(typeof(Escopeta));
+        if (escopetaObjeto != null) armas[totalArmas++] = escopetaObjeto;
+
+        if (totalArmas == 0) return false;
+
+        GameObject armaElegida = armas[Random.Range(0, totalArmas)];
+
+        Pistola pistola = armaElegida.GetComponent<Pistola>();
+        Rifle rifle = armaElegida.GetComponent<Rifle>();
+        Escopeta escopeta = armaElegida.GetComponent<Escopeta>();
+
+        if (pistola != null)
+        {
+            pistola.AgregarBalas(cantidad);
+            tipoArma = "pistola";
+            if (armaElegida == armaActualObjeto && HUDController.Instance != null)
+            {
+                HUDController.Instance.ActualizarMunicion(pistola.Cartucho, pistola.Balas);
+            }
+            return true;
+        }
+
+        if (rifle != null)
+        {
+            rifle.AgregarBalas(cantidad);
+            tipoArma = "rifle";
+            if (armaElegida == armaActualObjeto && HUDController.Instance != null)
+            {
+                HUDController.Instance.ActualizarMunicion(rifle.Cartucho, rifle.Balas);
+            }
+            return true;
+        }
+
+        if (escopeta != null)
+        {
+            escopeta.AgregarBalas(cantidad);
+            tipoArma = "escopeta";
+            if (armaElegida == armaActualObjeto && HUDController.Instance != null)
+            {
+                HUDController.Instance.ActualizarMunicion(escopeta.Cartucho, escopeta.Balas);
+            }
+            return true;
+        }
+
+        return false;
     }
 
     void RecogerArma()
@@ -363,12 +443,12 @@ public class Movimiento : MonoBehaviour
 
     GameObject ObtenerArma(GameObject objeto)
     {
-        Pistola  pistola  = objeto.GetComponentInChildren<Pistola>();
-        Rifle    rifle    = objeto.GetComponentInChildren<Rifle>();
-        Escopeta escopeta = objeto.GetComponentInChildren<Escopeta>();
+        Pistola pistola = objeto.GetComponent<Pistola>();
+        Rifle rifle = objeto.GetComponent<Rifle>();
+        Escopeta escopeta = objeto.GetComponent<Escopeta>();
 
-        if (pistola  != null) return pistola.gameObject;
-        if (rifle    != null) return rifle.gameObject;
+        if (pistola != null) return pistola.gameObject;
+        if (rifle != null) return rifle.gameObject;
         if (escopeta != null) return escopeta.gameObject;
         return null;
     }

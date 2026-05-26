@@ -6,8 +6,8 @@ public class HUDController : MonoBehaviour
     public static HUDController Instance;
 
     [Header("Salud")]
-    public Slider     barraVida;
-    public Text       textoVida;
+    public Slider barraVida;
+    public Text textoVida;
     public GameObject panelBajaVida;
     public GameObject panelMuyBajaVida;
 
@@ -16,6 +16,8 @@ public class HUDController : MonoBehaviour
 
     [Header("Municion")]
     public Text textoMunicion;
+
+
 
     void Awake()
     {
