@@ -11,8 +11,8 @@ public class PantallaGameOver : MonoBehaviour
     void Start()
     {
         Cursor.lockState = CursorLockMode.None;
-        Cursor.visible   = true;
-        Time.timeScale   = 1f;
+        Cursor.visible = true;
+        Time.timeScale = 1f;
 
         if (textoPuntuacionFinal != null && GameManager.Instance != null)
         {
@@ -24,7 +24,7 @@ public class PantallaGameOver : MonoBehaviour
             textoMensaje.text = "GAME OVER";
         }
 
-        Debug.Log("Pantalla Game Over cargada");
+        Debug.Log("Game Over");
     }
 
     public void Reiniciar()
