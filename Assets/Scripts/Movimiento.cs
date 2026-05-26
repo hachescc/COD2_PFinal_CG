@@ -145,93 +145,8 @@ public class Movimiento : MonoBehaviour
             }
             camara.fieldOfView = 60f;
         }
-
-        Aim();
-        SelectArma();
-
-
     }
 
-
-    void SelectArma()
-    {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            SeleccionarArma(typeof(Pistola));
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            SeleccionarArma(typeof(Rifle));
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            SeleccionarArma(typeof(Escopeta));
-        }
-    }
-
-    void Aim()
-    {
-        if (armaActualObjeto == null)
-        {
-            return;
-        }
-
-        if (camara == null)
-        {
-            return;
-        }
-
-        if (Input.GetMouseButton(1))
-        {
-            Rifle rifle = armaActualObjeto.GetComponent<Rifle>();
-
-            if (rifle)
-            {
-                if (panelMira != null)
-                {
-                    panelMira.SetActive(true);
-                }
-
-                if (miraPequena != null)
-                {
-                    miraPequena.SetActive(false);
-                }
-
-                camara.fieldOfView = 30f;
-            }
-            else
-            {
-                camara.fieldOfView = 40f;
-            }
-        }
-
-        else if (Input.GetMouseButtonUp(1))
-        {
-            Rifle rifle = armaActualObjeto.GetComponent<Rifle>();
-
-            if (rifle)
-            {
-                if (panelMira != null)
-                {
-                    panelMira.SetActive(false);
-                }
-
-                if (miraPequena != null)
-                {
-                    miraPequena.SetActive(true);
-                }
-
-                camara.fieldOfView = 60f;
-            }
-            else
-            {
-                camara.fieldOfView = 60f;
-
-            }
-        }
-    }
     void Disparar()
     {
         if (armaActualObjeto == null)
@@ -297,7 +212,6 @@ public class Movimiento : MonoBehaviour
             }
         }
     }
-
 
     void Recargar()
     {
