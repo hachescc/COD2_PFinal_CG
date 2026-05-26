@@ -213,6 +213,7 @@ public class Movimiento : MonoBehaviour
         }
     }
 
+
     void Recargar()
     {
         if (armaActualObjeto == null)
