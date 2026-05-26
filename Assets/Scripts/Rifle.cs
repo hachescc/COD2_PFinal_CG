@@ -4,16 +4,13 @@ public class Rifle : MonoBehaviour
 {
     private Arma rifle = new Arma(25, 0.5f, 10);
 
-    void Update()
+    public void Disparar()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            rifle.Disparar();
-        }
+        rifle.Disparar();
+    }
 
-        if (Input.GetMouseButtonDown(1))
-        {
-            rifle.Recargar(10);
-        }
+    public void Recargar()
+    {
+        rifle.Recargar(10);
     }
 }
