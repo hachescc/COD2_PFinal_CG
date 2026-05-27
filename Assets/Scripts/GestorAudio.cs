@@ -32,6 +32,7 @@ public class GestorAudio : MonoBehaviour
     {
         if (fuenteEfectos == null) return;
 
+
         AudioClip clip = ObtenerClip(nombre);
 
         if (clip == null)
@@ -75,13 +76,13 @@ public class GestorAudio : MonoBehaviour
     {
         switch (nombre)
         {
-            case "disparo":         return sonidoDisparo;
-            case "impacto":         return sonidoImpacto;
-            case "recoger":         return sonidoRecoger;
-            case "ataque_enemigo":  return sonidoAtaqueEnemigo;
-            case "muerte_enemigo":  return sonidoMuerteEnemigo;
-            case "danio_jugador":   return sonidoDanioJugador;
-            default:                return null;
+            case "disparo": return sonidoDisparo;
+            case "impacto": return sonidoImpacto;
+            case "recoger": return sonidoRecoger;
+            case "ataque_enemigo": return sonidoAtaqueEnemigo;
+            case "muerte_enemigo": return sonidoMuerteEnemigo;
+            case "danio_jugador": return sonidoDanioJugador;
+            default: return null;
         }
     }
 }

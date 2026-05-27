@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MenuPausa : MonoBehaviour
 {
@@ -7,6 +8,8 @@ public class MenuPausa : MonoBehaviour
     public GameObject panelPausa;
 
     bool pausado = false;
+
+    public bool Pausado { get => pausado; set => pausado = value; }
 
     void Start()
     {
@@ -36,11 +39,12 @@ public class MenuPausa : MonoBehaviour
         pausado = true;
         Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.None;
-        Cursor.visible   = true;
+        Cursor.visible = true;
 
         if (panelPausa != null)
         {
             panelPausa.SetActive(true);
+
         }
 
         if (GestorAudio.Instance != null)
@@ -53,10 +57,10 @@ public class MenuPausa : MonoBehaviour
 
     public void Reanudar()
     {
+        Time.timeScale = 1f;
         pausado = false;
-        Time.timeScale   = 1f;
         Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible   = false;
+        Cursor.visible = false;
 
         if (panelPausa != null)
         {
@@ -76,7 +80,7 @@ public class MenuPausa : MonoBehaviour
         pausado = false;
         Time.timeScale = 1f;
         Cursor.lockState = CursorLockMode.None;
-        Cursor.visible   = true;
+        Cursor.visible = true;
 
         if (GameManager.Instance != null)
         {

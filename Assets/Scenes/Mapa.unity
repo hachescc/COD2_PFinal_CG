@@ -42642,6 +42642,7 @@ GameObject:
   - component: {fileID: 294925954}
   - component: {fileID: 294925953}
   - component: {fileID: 294925952}
+  - component: {fileID: 294925960}
   m_Layer: 0
   m_Name: Enemigo 2
   m_TagString: Enemigo
@@ -42662,11 +42663,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemigoIA
   jugador: {fileID: 0}
-  velocidad: 3.5
-  distanciaAtaque: 2
+  waypoints: []
+  tiempoEsperaWaypoint: 2
   distanciaVision: 15
-  danioAtaque: 10
-  tiempoEntreAtaques: 1.5
+  distanciaAtaque: 2
+  velocidadPatrulla: 2
+  velocidadPerseguir: 4
+  animVelocidad: velMovimiento
 --- !u!114 &294925953
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -42826,6 +42829,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &294925960
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 294925951}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &295195584
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -70176,7 +70201,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -70273,7 +70298,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -70384,8 +70409,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b210032075be3141b8ccb12f8392ff3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MusicaEscena
-  musicaEscena: {fileID: 0}
-  volumen: 0.5
+  musicaEscena: {fileID: 8300000, guid: 49df8b7309c4b334a9f53c662a5d4b6a, type: 3}
+  volumen: 0.1
 --- !u!114 &493943688
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -70400,12 +70425,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GestorAudio
   fuenteEfectos: {fileID: 493943685}
   fuenteMusica: {fileID: 493943684}
-  sonidoDisparo: {fileID: 0}
-  sonidoImpacto: {fileID: 0}
-  sonidoRecoger: {fileID: 8300000, guid: 354d530cf7b87c741bc3845d8f37554f, type: 3}
-  sonidoAtaqueEnemigo: {fileID: 0}
-  sonidoMuerteEnemigo: {fileID: 0}
-  sonidoDanioJugador: {fileID: 0}
+  sonidoDisparo: {fileID: 8300000, guid: 543990deb3b0f30408fd41e7b34a99b2, type: 3}
+  sonidoImpacto: {fileID: 8300000, guid: 06fe8410213e8794dab06416ecf5023a, type: 3}
+  sonidoRecoger: {fileID: 8300000, guid: d8eb136115c2d644981d8067f8a97e2a, type: 3}
+  sonidoAtaqueEnemigo: {fileID: 8300000, guid: 01057a7d3d1577a4380f7c971aed6424, type: 3}
+  sonidoMuerteEnemigo: {fileID: 8300000, guid: 269adf118dae6c24d8ee2e5e1c675f5b, type: 3}
+  sonidoDanioJugador: {fileID: 8300000, guid: 269adf118dae6c24d8ee2e5e1c675f5b, type: 3}
 --- !u!114 &493943689
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -96894,6 +96919,7 @@ GameObject:
   - component: {fileID: 687825199}
   - component: {fileID: 687825202}
   - component: {fileID: 687825201}
+  - component: {fileID: 687825203}
   m_Layer: 0
   m_Name: Enemigo
   m_TagString: Enemigo
@@ -97058,11 +97084,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemigoIA
   jugador: {fileID: 0}
-  velocidad: 3.5
-  distanciaAtaque: 2
+  waypoints: []
+  tiempoEsperaWaypoint: 2
   distanciaVision: 15
-  danioAtaque: 10
-  tiempoEntreAtaques: 1.5
+  distanciaAtaque: 2
+  velocidadPatrulla: 2
+  velocidadPerseguir: 4
+  animVelocidad: velMovimiento
 --- !u!114 &687825202
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -97078,6 +97106,28 @@ MonoBehaviour:
   saludMaxima: 100
   saludActual: 0
   puntosAlMorir: 100
+--- !u!95 &687825203
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 687825194}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!4 &689525174 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4754251929083912, guid: feae48108558fbc49aa10a5c915abd98, type: 3}
@@ -133275,7 +133325,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.024618346, y: 0.15611799, z: 0.24049868}
+  m_Size: {x: 0.08237414, y: 0.17209196, z: 0.27209437}
   m_Center: {x: 0.0501602, y: 0.07900258, z: 0.022868894}
 --- !u!4 &932070413 stripped
 Transform:
@@ -191618,7 +191668,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.061473314, y: 0.2464611, z: 0.85244644}
+  m_Size: {x: 0.3667249, y: 0.3590578, z: 1.0131309}
   m_Center: {x: 0.04919572, y: 0.17106587, z: 0.051929787}
 --- !u!114 &1356476965
 MonoBehaviour:
@@ -192791,7 +192841,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.063821785, y: 0.2322381, z: 0.926512}
+  m_Size: {x: 0.23838358, y: 0.30878904, z: 1.0179162}
   m_Center: {x: 0.049195718, y: 0.11663369, z: 0.060812756}
 --- !u!114 &1363140267
 MonoBehaviour:
@@ -194241,7 +194291,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 10.799988, y: -13.799988}
-  m_SizeDelta: {x: 253.7319, y: 81.314}
+  m_SizeDelta: {x: 387.6794, y: 89.0232}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1373863805
 MonoBehaviour:
@@ -289355,6 +289405,7 @@ GameObject:
   - component: {fileID: 2019546669}
   - component: {fileID: 2019546668}
   - component: {fileID: 2019546667}
+  - component: {fileID: 2019546675}
   m_Layer: 0
   m_Name: Enemigo 3
   m_TagString: Enemigo
@@ -289375,11 +289426,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemigoIA
   jugador: {fileID: 0}
-  velocidad: 3.5
-  distanciaAtaque: 2
+  waypoints: []
+  tiempoEsperaWaypoint: 2
   distanciaVision: 15
-  danioAtaque: 10
-  tiempoEntreAtaques: 1.5
+  distanciaAtaque: 2
+  velocidadPatrulla: 2
+  velocidadPerseguir: 4
+  animVelocidad: velMovimiento
 --- !u!114 &2019546668
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -289539,6 +289592,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &2019546675
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2019546666}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!4 &2019653898 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 175314511579609993, guid: 0d3784e80d2c3074bb909d9cdd536402, type: 3}
