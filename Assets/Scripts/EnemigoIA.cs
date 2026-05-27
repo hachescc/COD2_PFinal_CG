@@ -1,97 +1,164 @@
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(Animator))]
 public class EnemigoIA : MonoBehaviour
 {
+    public enum Estado { Patrullando, Persiguiendo, Atacando }
+
     [Header("Referencias")]
     public Transform jugador;
 
-    [Header("Movimiento")]
-    public float velocidad        = 3.5f;
-    public float distanciaAtaque  = 2f;
-    public float distanciaVision  = 15f;
+    [Header("Patrullaje")]
+    public Transform[] waypoints;
+    public float       tiempoEsperaWaypoint = 2f;
 
-    [Header("Combate")]
-    public float danioAtaque      = 10f;
-    public float tiempoEntreAtaques = 1.5f;
+    [Header("Detección y velocidades")]
+    public float distanciaVision    = 15f;
+    public float distanciaAtaque    = 8f;
+    public float velocidadPatrulla  = 2f;
+    public float velocidadPerseguir = 4f;
+
+    [Header("Animación")]
+    public string animVelocidad = "velMovimiento";
 
     NavMeshAgent agente;
-    float        tiempoUltimoAtaque = 0f;
-    bool         jugadorEnRango     = false;
+    Animator     anim;
+
+    Estado estadoActual   = Estado.Patrullando;
+    Estado estadoAnterior = Estado.Patrullando; 
+
+    int   waypointActual      = 0;
+    float timerEsperaWaypoint = 0f;
+    bool  esperandoEnWaypoint = false;
+
+    public bool JugadorEnRango => estadoActual == Estado.Atacando;
 
     void Start()
     {
         agente = GetComponent<NavMeshAgent>();
-
-        if (agente != null)
-        {
-            agente.speed = velocidad;
-        }
+        anim   = GetComponent<Animator>();
 
         if (jugador == null)
         {
             GameObject go = GameObject.FindWithTag("Player");
-            if (go != null)
-            {
-                jugador = go.transform;
-            }
+            if (go != null) jugador = go.transform;
         }
+
+        if (waypoints != null && waypoints.Length > 0)
+            IrASiguienteWaypoint();
     }
 
     void Update()
     {
         if (jugador == null) return;
-        if (agente  == null) return;
 
         float distancia = Vector3.Distance(transform.position, jugador.position);
 
-        if (distancia <= distanciaVision)
-        {
-            agente.SetDestination(jugador.position);
+        if      (distancia <= distanciaAtaque) estadoActual = Estado.Atacando;
+        else if (distancia <= distanciaVision) estadoActual = Estado.Persiguiendo;
+        else                                   estadoActual = Estado.Patrullando;
 
-            if (distancia <= distanciaAtaque)
-            {
+        if (estadoActual != estadoAnterior)
+        {
+            AlCambiarEstado(estadoActual);
+            estadoAnterior = estadoActual;
+        }
+
+        switch (estadoActual)
+        {
+            case Estado.Patrullando:  Patrullar();  break;
+            case Estado.Persiguiendo: Perseguir();  break;
+            case Estado.Atacando:     EnAtaque();   break;
+        }
+
+        ActualizarAnimacion();
+    }
+
+    void AlCambiarEstado(Estado nuevoEstado)
+    {
+        switch (nuevoEstado)
+        {
+            case Estado.Patrullando:
                 agente.ResetPath();
-                jugadorEnRango = true;
-                Atacar();
-            }
-            else
+                agente.isStopped      = false;
+                esperandoEnWaypoint   = false;
+                IrASiguienteWaypoint();
+                break;
+
+            case Estado.Persiguiendo:
+                agente.isStopped = false;
+                break;
+
+            case Estado.Atacando:
+                agente.isStopped = true;
+                agente.ResetPath();
+                break;
+        }
+    }
+
+    void Patrullar()
+    {
+        if (waypoints == null || waypoints.Length == 0) return;
+
+        agente.speed = velocidadPatrulla;
+
+        if (esperandoEnWaypoint)
+        {
+            timerEsperaWaypoint -= Time.deltaTime;
+            if (timerEsperaWaypoint <= 0f)
             {
-                jugadorEnRango = false;
+                esperandoEnWaypoint = false;
+                IrASiguienteWaypoint();
             }
+            return;
         }
-        else
+
+        if (!agente.pathPending && agente.remainingDistance <= agente.stoppingDistance)
         {
-            agente.ResetPath();
-            jugadorEnRango = false;
+            esperandoEnWaypoint = true;
+            timerEsperaWaypoint = tiempoEsperaWaypoint;
         }
     }
 
-    void Atacar()
+    void IrASiguienteWaypoint()
     {
-        if (Time.time < tiempoUltimoAtaque + tiempoEntreAtaques) return;
-
-        tiempoUltimoAtaque = Time.time;
-        Debug.Log(gameObject.name + " ataca al jugador!");
-
-        SaludJugador saludJugador = jugador.GetComponent<SaludJugador>();
-        if (saludJugador != null)
-        {
-            saludJugador.getDamage(danioAtaque);
-        }
-
-        if (GestorAudio.Instance != null)
-        {
-            GestorAudio.Instance.ReproducirEfecto("ataque_enemigo");
-        }
+        if (waypoints == null || waypoints.Length == 0) return;
+        agente.SetDestination(waypoints[waypointActual].position);
+        waypointActual = (waypointActual + 1) % waypoints.Length;
     }
 
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, distanciaVision);
 
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, distanciaAtaque);
+    void Perseguir()
+    {
+        agente.speed = velocidadPerseguir;
+        agente.SetDestination(jugador.position);
+    }
+
+    void EnAtaque()
+    {
+        MirarAlJugador();
+    }
+
+    void MirarAlJugador()
+    {
+        Vector3 dir = (jugador.position - transform.position).normalized;
+        dir.y = 0f;
+        if (dir != Vector3.zero)
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                Quaternion.LookRotation(dir),
+                Time.deltaTime * 8f
+            );
+    }
+
+    void ActualizarAnimacion()
+    {
+        float vel = agente.isStopped
+            ? 0f
+            : agente.velocity.magnitude / velocidadPerseguir;
+
+        anim.SetFloat(animVelocidad, vel, 0.1f, Time.deltaTime);
     }
 }
