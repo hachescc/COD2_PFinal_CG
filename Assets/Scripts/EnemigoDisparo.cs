@@ -4,33 +4,33 @@ using UnityEngine;
 public class EnemigoDisparo : MonoBehaviour
 {
     [Header("Prefab y punto de disparo")]
-    public GameObject    prefabBala;
-    public Transform     puntoDisparo;   // hijo vacío en la punta del arma
+    public GameObject prefabBala;
+    public Transform puntoDisparo;
 
     [Header("Estadísticas")]
-    public float danioBalas        = 10f;
-    public float velocidadBala     = 20f;
+    public float danioBalas = 10f;
+    public float velocidadBala = 20f;
     public float tiempoEntreDisparos = 1.5f;
 
     [Header("Munición y recarga")]
-    public int   municionCargador  = 10;
-    public int   municionActual;
-    public float tiempoRecarga     = 3f;
+    public int municionCargador = 10;
+    public int municionActual;
+    public float tiempoRecarga = 3f;
 
     [Header("Animaciones - Nombres de parámetros")]
-    public string paramDisparar    = "Disparar";   // Trigger
-    public string paramRecargar    = "Recargar";   // Trigger  ← agregar cuando tengas la anim
+    public string paramDisparar = "Disparar";   // Trigger
+    public string paramRecargar = "Recargar";   // Trigger  ← agregar cuando tengas la anim
 
     EnemigoIA movimiento;
-    Animator          anim;
+    Animator anim;
 
     float tiempoUltimoDisparo = 0f;
-    bool  estaCargando        = false;
+    bool estaCargando = false;
 
     void Start()
     {
-        movimiento     = GetComponent<EnemigoIA>();
-        anim           = GetComponent<Animator>();
+        movimiento = GetComponent<EnemigoIA>();
+        anim = GetComponent<Animator>();
         municionActual = municionCargador;
     }
 
@@ -70,7 +70,7 @@ public class EnemigoDisparo : MonoBehaviour
         BalaEnemigo bala = balaGO.GetComponent<BalaEnemigo>();
         if (bala != null)
         {
-            bala.danio     = danioBalas;
+            bala.danio = danioBalas;
             bala.velocidad = velocidadBala;
         }
 
@@ -98,7 +98,7 @@ public class EnemigoDisparo : MonoBehaviour
         yield return new WaitForSeconds(tiempoRecarga);
 
         municionActual = municionCargador;
-        estaCargando   = false;
+        estaCargando = false;
         Debug.Log($"{gameObject.name} recarga completa.");
     }
 
