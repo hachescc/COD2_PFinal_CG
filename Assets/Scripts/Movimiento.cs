@@ -10,6 +10,8 @@ public class Movimiento : MonoBehaviour
     public float veloCorrer = 6f;
     public float gravedad = -9.81f;
     public float salto = 4f;
+    Animator anim;
+    public string animVelocidad = "velMovimiento"; 
     #endregion
 
     #region arma
@@ -65,6 +67,8 @@ public class Movimiento : MonoBehaviour
             armaActualObjeto = carryPoint.transform.GetChild(0).gameObject;
             armaActualObjeto.SetActive(true);
         }
+
+        anim = GetComponent<Animator>(); 
 
         MostrarMensajeRecoger(false);
     }
@@ -127,6 +131,8 @@ public class Movimiento : MonoBehaviour
                 HUDController.Instance.ActualizarMunicion(escopeta.Cartucho, escopeta.Balas);
             }
         }
+
+          ActualizarAnimacion(); 
     }
 
     void SelectArma()
@@ -461,5 +467,18 @@ public class Movimiento : MonoBehaviour
             textoRecoger.text = "Presiona E para recoger";
             textoRecoger.gameObject.SetActive(mostrar);
         }
+    }
+
+    void ActualizarAnimacion()
+    {
+        if (anim == null) return;
+
+        float x = Input.GetAxisRaw("Horizontal");
+        float z = Input.GetAxisRaw("Vertical");
+
+        float magnitud = new Vector2(x, z).magnitude;
+        magnitud = Mathf.Clamp01(magnitud);
+
+        anim.SetFloat(animVelocidad, magnitud, 0.1f, Time.deltaTime);
     }
 }
