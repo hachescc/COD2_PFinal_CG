@@ -27,7 +27,7 @@ public class EnemigoIA : MonoBehaviour
     Animator     anim;
 
     Estado estadoActual   = Estado.Patrullando;
-    Estado estadoAnterior = Estado.Patrullando; 
+    Estado estadoAnterior = Estado.Patrullando;
 
     int   waypointActual      = 0;
     float timerEsperaWaypoint = 0f;
@@ -56,9 +56,9 @@ public class EnemigoIA : MonoBehaviour
 
         float distancia = Vector3.Distance(transform.position, jugador.position);
 
-        if      (distancia <= distanciaAtaque) estadoActual = Estado.Atacando;
-        else if (distancia <= distanciaVision) estadoActual = Estado.Persiguiendo;
-        else                                   estadoActual = Estado.Patrullando;
+        if      (distancia <= distanciaAtaque)  estadoActual = Estado.Atacando;
+        else if (distancia <= distanciaVision)  estadoActual = Estado.Persiguiendo;
+        else                                    estadoActual = Estado.Patrullando;
 
         if (estadoActual != estadoAnterior)
         {
@@ -82,8 +82,8 @@ public class EnemigoIA : MonoBehaviour
         {
             case Estado.Patrullando:
                 agente.ResetPath();
-                agente.isStopped      = false;
-                esperandoEnWaypoint   = false;
+                agente.isStopped    = false;
+                esperandoEnWaypoint = false;
                 IrASiguienteWaypoint();
                 break;
 
@@ -129,7 +129,6 @@ public class EnemigoIA : MonoBehaviour
         waypointActual = (waypointActual + 1) % waypoints.Length;
     }
 
-
     void Perseguir()
     {
         agente.speed = velocidadPerseguir;
@@ -138,6 +137,8 @@ public class EnemigoIA : MonoBehaviour
 
     void EnAtaque()
     {
+        agente.isStopped = true;
+        agente.ResetPath();
         MirarAlJugador();
     }
 
