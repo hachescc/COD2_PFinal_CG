@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
     [Header("Estado del juego")]
     public int  puntuacion     = 0;
     public bool juegoTerminado = false;
+    public bool gano           = false;
 
     void Awake()
     {
@@ -32,6 +33,11 @@ public class GameManager : MonoBehaviour
         {
             HUDController.Instance.ActualizarPuntuacion(puntuacion);
         }
+
+        if (puntuacion >= 800)
+        {
+            Ganar();
+        }
     }
 
     public void GameOver()
@@ -39,6 +45,7 @@ public class GameManager : MonoBehaviour
         if (juegoTerminado) return;
 
         juegoTerminado = true;
+        gano = false;
         Debug.Log("GAME OVER");
         SceneManager.LoadScene("Game Over");
     }
@@ -48,13 +55,16 @@ public class GameManager : MonoBehaviour
         if (juegoTerminado) return;
 
         juegoTerminado = true;
+        gano = true;
         Debug.Log("GANASTE!");
+        SceneManager.LoadScene("Game Over");
     }
 
     public void ReiniciarJuego()
     {
         juegoTerminado = false;
         puntuacion     = 0;
+        gano           = false;
         SceneManager.LoadScene("Mapa");
     }
 
@@ -62,6 +72,7 @@ public class GameManager : MonoBehaviour
     {
         juegoTerminado = false;
         puntuacion     = 0;
+        gano           = false;
         SceneManager.LoadScene("Menú");
     }
 }

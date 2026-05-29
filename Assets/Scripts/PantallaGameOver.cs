@@ -21,10 +21,17 @@ public class PantallaGameOver : MonoBehaviour
 
         if (textoMensaje != null)
         {
-            textoMensaje.text = "GAME OVER";
+            if (GameManager.Instance != null && GameManager.Instance.gano)
+            {
+                textoMensaje.text = "¡GANASTE!";
+            }
+            else
+            {
+                textoMensaje.text = "GAME OVER";
+            }
         }
 
-        Debug.Log("Game Over");
+        Debug.Log("Pantalla final cargada");
     }
 
     public void Reiniciar()

@@ -9,15 +9,19 @@ public class Mouse : MonoBehaviour
     public Transform cuerpoJugador;
 
     float rotaX = 0f;
+    MenuPausa menuPausa;
 
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
+        menuPausa = FindObjectOfType<MenuPausa>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (menuPausa != null && menuPausa.Pausado) return;
+
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
 
