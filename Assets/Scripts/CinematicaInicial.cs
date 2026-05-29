@@ -9,6 +9,14 @@ public class CinematicaInicial : MonoBehaviour
 
     float tiempoTranscurrido = 0f;
 
+    void Start()
+    {
+        if (GestorAudio.Instance != null)
+        {
+            GestorAudio.Instance.CambiarVolumenMusica(0f);
+        }
+    }    
+
     void Update()
     {
         tiempoTranscurrido += Time.deltaTime;

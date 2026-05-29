@@ -94,6 +94,7 @@ public class EnemigoIA : MonoBehaviour
             case Estado.Atacando:
                 agente.isStopped = true;
                 agente.ResetPath();
+                agente.velocity = Vector3.zero;
                 break;
         }
     }
